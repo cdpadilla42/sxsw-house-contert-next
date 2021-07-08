@@ -1,6 +1,8 @@
-import Head from 'next/head'
+import Head from 'next/head';
+import dbConnect from '../util/dbConnect';
+import ListingsAndReviews from '/models/listingsAndReviews';
 
-export default function Home() {
+export default function Home({ vacaySpot }) {
   return (
     <div className="container">
       <Head>
@@ -9,9 +11,7 @@ export default function Home() {
       </Head>
 
       <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+        <h1 className="title">{vacaySpot.name}</h1>
 
         <p className="description">
           Get started by editing <code>pages/index.js</code>
@@ -54,8 +54,7 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel" className="logo" />
+          Powered by <img src="/vercel.svg" alt="Vercel" className="logo" />
         </a>
       </footer>
 
@@ -205,5 +204,17 @@ export default function Home() {
         }
       `}</style>
     </div>
-  )
+  );
+}
+
+export async function getServerSideProps({ params }) {
+  const isConnected = await dbConnect();
+
+  const vacaySpot = await ListingsAndReviews.findById('10006546', {
+    name: 1,
+  }).lean();
+  console.log(vacaySpot);
+  console.log(typeof vacaySpot);
+
+  return { props: { vacaySpot } };
 }
