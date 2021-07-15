@@ -1,8 +1,34 @@
 import Head from 'next/head';
 import dbConnect from '../util/dbConnect';
-import ListingsAndReviews from '/models/listingsAndReviews';
+import serialize from '../util/serializeData';
+import Restaurants from '/models/Restaurants';
+import { useQuery } from 'react-query';
+import queryString from 'query-string';
+
+const queryObjToString = (queryObj) => {
+  if (Object.keys(queryObj).length === 0) return '';
+  const s = queryString.stringify(queryObj);
+  return '?' + s;
+};
+
+const getRestaurants = async ({ queryKey }) => {
+  const [_, query] = queryKey;
+  const blob = await fetch(
+    `http://localhost:3000/api/restaurants${queryObjToString(query)}`
+  );
+  const data = await blob.json();
+  console.log(data);
+  console.log(query);
+  return data;
+};
 
 export default function Home({ vacaySpot }) {
+  const query = { borough: 'Staten Island' };
+  const { data } = useQuery(['restaurants', query], getRestaurants);
+  const handleClick = (e) => {
+    getRestaurants();
+  };
+
   return (
     <div className="container">
       <Head>
@@ -12,6 +38,8 @@ export default function Home({ vacaySpot }) {
 
       <main>
         <h1 className="title">{vacaySpot.name}</h1>
+
+        <button onClick={handleClick}>Get Brooklyn Restaurants</button>
 
         <p className="description">
           Get started by editing <code>pages/index.js</code>
@@ -210,11 +238,13 @@ export default function Home({ vacaySpot }) {
 export async function getServerSideProps({ params }) {
   const isConnected = await dbConnect();
 
-  const vacaySpot = await ListingsAndReviews.findById('10006546', {
+  const vacaySpot = await Restaurants.findById('5eb3d668b31de5d588f4292a', {
     name: 1,
   }).lean();
   console.log(vacaySpot);
   console.log(typeof vacaySpot);
 
-  return { props: { vacaySpot } };
+  const props = serialize({ vacaySpot });
+
+  return { props };
 }
