@@ -32,6 +32,7 @@ export default function Home({ vacaySpot }) {
   const [input, setInput] = useState('');
   const mapRef = useRef(null);
   const map = useRef(null);
+  const center = [-73.9012, 40.6839];
   const { data } = useQuery(['restaurants', filters], getRestaurants);
   const handleClick = (e) => {
     setFilters({ ...filters, borough: input });
@@ -46,6 +47,8 @@ export default function Home({ vacaySpot }) {
     map.current = new mapboxgl.Map({
       container: mapRef.current,
       style: 'mapbox://styles/mapbox/streets-v11',
+      center,
+      zoom: 10,
     });
   });
 
