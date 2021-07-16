@@ -37,6 +37,7 @@ const testCoords = [
 export default function Home({ vacaySpot }) {
   const [filters, setFilters] = useState({ borough: 'Staten Island' });
   const [input, setInput] = useState('');
+  const [mapLoaded, setMapLoaded] = useState(false);
   const mapRef = useRef(null);
   const map = useRef(null);
   const center = [-73.9012, 40.6839];
@@ -64,10 +65,19 @@ export default function Home({ vacaySpot }) {
       center,
       zoom: 10,
     });
-    testCoords.forEach(initiatePin);
+
+    setMapLoaded(true);
 
     return () => map.current.remove();
   }, []);
+
+  useEffect(() => {
+    if (mapLoaded && data) {
+      data?.data?.forEach(({ address }) => {
+        initiatePin(address.coord);
+      });
+    }
+  }, [mapLoaded, data]);
 
   return (
     <div className="container">
