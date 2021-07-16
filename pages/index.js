@@ -28,21 +28,17 @@ const getRestaurants = async ({ queryKey }) => {
   return data;
 };
 
-const testCoords = [
-  [-73.98241999999999, 40.579505],
-  [-73.9068506, 40.6199034],
-  [-73.961704, 40.662942],
-];
-
 export default function Home({ vacaySpot }) {
-  const [filters, setFilters] = useState({ borough: 'Staten Island' });
+  const [filters, setFilters] = useState({ borough: 'Brooklyn' });
   const [input, setInput] = useState('');
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [markers, setMarkers] = useState([]);
   const mapRef = useRef(null);
   const map = useRef(null);
   const center = [-73.9012, 40.6839];
   const { data } = useQuery(['restaurants', filters], getRestaurants);
   const handleClick = (e) => {
+    clearPins();
     setFilters({ ...filters, borough: input });
   };
 
@@ -54,7 +50,15 @@ export default function Home({ vacaySpot }) {
     const el = document.createElement('div');
     el.className = 'marker';
     ReactDOM.render(<div className="marker" />, el);
-    new mapboxgl.Marker(el).setLngLat(coords).addTo(map.current);
+    const marker = new mapboxgl.Marker(el).setLngLat(coords).addTo(map.current);
+    return { marker, el };
+  };
+
+  const clearPins = () => {
+    markers.forEach(({ marker, el }) => {
+      marker.remove();
+      ReactDOM.unmountComponentAtNode(el);
+    });
   };
 
   useEffect(() => {
@@ -73,9 +77,10 @@ export default function Home({ vacaySpot }) {
 
   useEffect(() => {
     if (mapLoaded && data) {
-      data?.data?.forEach(({ address }) => {
-        initiatePin(address.coord);
-      });
+      const markers = data?.data?.map(({ address }) =>
+        initiatePin(address.coord)
+      );
+      setMarkers(markers);
     }
   }, [mapLoaded, data]);
 
