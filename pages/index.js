@@ -46,11 +46,19 @@ export default function Home({ vacaySpot }) {
     setInput(e.currentTarget.value);
   };
 
-  const initiatePin = (coords) => {
+  const initiatePin = (restaurant) => {
     const el = document.createElement('div');
     el.className = 'marker';
     ReactDOM.render(<div className="marker" />, el);
-    const marker = new mapboxgl.Marker(el).setLngLat(coords).addTo(map.current);
+    const marker = new mapboxgl.Marker(el)
+      .setLngLat(restaurant.address.coord)
+      .setPopup(
+        new mapboxgl.Popup({ offset: 25 }) // add popups
+          .setHTML(
+            '<h3>' + restaurant.name + '</h3><p>' + restaurant.cuisine + '</p>'
+          )
+      )
+      .addTo(map.current);
     return { marker, el };
   };
 
@@ -77,9 +85,7 @@ export default function Home({ vacaySpot }) {
 
   useEffect(() => {
     if (mapLoaded && data) {
-      const markers = data?.data?.map(({ address }) =>
-        initiatePin(address.coord)
-      );
+      const markers = data?.data?.map((restaurant) => initiatePin(restaurant));
       setMarkers(markers);
     }
   }, [mapLoaded, data]);
