@@ -1,10 +1,14 @@
+import { useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
 import dbConnect from '../util/dbConnect';
 import serialize from '../util/serializeData';
 import Restaurants from '/models/Restaurants';
 import { useQuery } from 'react-query';
 import queryString from 'query-string';
-import { useState } from 'react';
+import mapboxgl from 'mapbox-gl/dist/mapbox-gl';
+
+mapboxgl.accessToken =
+  'pk.eyJ1IjoiY2RwYWRpbGxhNDIiLCJhIjoiY2tyNms5dzRsMWphYzJubjNxbDZqOHBwbyJ9.v-4FKZnlExdu_wmXrtgPvw';
 
 const queryObjToString = (queryObj) => {
   if (Object.keys(queryObj).length === 0) return '';
@@ -26,6 +30,8 @@ const getRestaurants = async ({ queryKey }) => {
 export default function Home({ vacaySpot }) {
   const [filters, setFilters] = useState({ borough: 'Staten Island' });
   const [input, setInput] = useState('');
+  const mapRef = useRef(null);
+  const map = useRef(null);
   const { data } = useQuery(['restaurants', filters], getRestaurants);
   const handleClick = (e) => {
     setFilters({ ...filters, borough: input });
@@ -34,6 +40,14 @@ export default function Home({ vacaySpot }) {
   const handleChange = (e) => {
     setInput(e.currentTarget.value);
   };
+
+  useEffect(() => {
+    if (map.current) return;
+    map.current = new mapboxgl.Map({
+      container: mapRef.current,
+      style: 'mapbox://styles/mapbox/streets-v11',
+    });
+  });
 
   return (
     <div className="container">
@@ -50,6 +64,9 @@ export default function Home({ vacaySpot }) {
         <p className="description">
           Get started by editing <code>pages/index.js</code>
         </p>
+        <div className="map-wrapper">
+          <div className="map-container" ref={mapRef} />
+        </div>
 
         <div className="grid">
           <a href="https://nextjs.org/docs" className="card">
@@ -93,6 +110,15 @@ export default function Home({ vacaySpot }) {
       </footer>
 
       <style jsx>{`
+        .map-wrapper {
+          position: relative;
+          width: 400px;
+        }
+
+        .map-container {
+          height: 400px;
+        }
+
         .container {
           min-height: 100vh;
           padding: 0 0.5rem;

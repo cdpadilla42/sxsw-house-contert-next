@@ -1,6 +1,7 @@
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Hydrate } from 'react-query/hydration';
+import '../styles/mapbox-gl.css';
 
 export default function MyApp({ Component, pageProps }) {
   const [queryClient] = React.useState(() => new QueryClient());
