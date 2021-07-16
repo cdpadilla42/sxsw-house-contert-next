@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 import Head from 'next/head';
 import dbConnect from '../util/dbConnect';
 import serialize from '../util/serializeData';
@@ -27,6 +28,12 @@ const getRestaurants = async ({ queryKey }) => {
   return data;
 };
 
+const testCoords = [
+  [-73.98241999999999, 40.579505],
+  [-73.9068506, 40.6199034],
+  [-73.961704, 40.662942],
+];
+
 export default function Home({ vacaySpot }) {
   const [filters, setFilters] = useState({ borough: 'Staten Island' });
   const [input, setInput] = useState('');
@@ -42,6 +49,13 @@ export default function Home({ vacaySpot }) {
     setInput(e.currentTarget.value);
   };
 
+  const initiatePin = (coords) => {
+    const el = document.createElement('div');
+    el.className = 'marker';
+    ReactDOM.render(<div className="marker" />, el);
+    new mapboxgl.Marker(el).setLngLat(coords).addTo(map.current);
+  };
+
   useEffect(() => {
     if (map.current) return;
     map.current = new mapboxgl.Map({
@@ -50,7 +64,10 @@ export default function Home({ vacaySpot }) {
       center,
       zoom: 10,
     });
-  });
+    testCoords.forEach(initiatePin);
+
+    return () => map.current.remove();
+  }, []);
 
   return (
     <div className="container">
