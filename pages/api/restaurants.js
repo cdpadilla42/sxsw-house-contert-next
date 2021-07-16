@@ -9,8 +9,7 @@ export default async function handler(req, res) {
 
   switch (method) {
     case 'GET':
-      query.limit = 100;
-      const restaurants = await Restaurants.find({}, null, query);
+      const restaurants = await Restaurants.find(query, null, { limit: 100 });
       res.status(200).json({ success: true, data: restaurants });
       break;
     case 'POST':

@@ -4,6 +4,7 @@ import serialize from '../util/serializeData';
 import Restaurants from '/models/Restaurants';
 import { useQuery } from 'react-query';
 import queryString from 'query-string';
+import { useState } from 'react';
 
 const queryObjToString = (queryObj) => {
   if (Object.keys(queryObj).length === 0) return '';
@@ -23,10 +24,15 @@ const getRestaurants = async ({ queryKey }) => {
 };
 
 export default function Home({ vacaySpot }) {
-  const query = { borough: 'Staten Island' };
-  const { data } = useQuery(['restaurants', query], getRestaurants);
+  const [filters, setFilters] = useState({ borough: 'Staten Island' });
+  const [input, setInput] = useState('');
+  const { data } = useQuery(['restaurants', filters], getRestaurants);
   const handleClick = (e) => {
-    getRestaurants();
+    setFilters({ ...filters, borough: input });
+  };
+
+  const handleChange = (e) => {
+    setInput(e.currentTarget.value);
   };
 
   return (
@@ -38,7 +44,7 @@ export default function Home({ vacaySpot }) {
 
       <main>
         <h1 className="title">{vacaySpot.name}</h1>
-
+        <input type="text" value={input} onChange={handleChange} />
         <button onClick={handleClick}>Get Brooklyn Restaurants</button>
 
         <p className="description">
@@ -235,14 +241,12 @@ export default function Home({ vacaySpot }) {
   );
 }
 
-export async function getServerSideProps({ params }) {
-  const isConnected = await dbConnect();
+export async function getServerSideProps() {
+  await dbConnect();
 
   const vacaySpot = await Restaurants.findById('5eb3d668b31de5d588f4292a', {
     name: 1,
   }).lean();
-  console.log(vacaySpot);
-  console.log(typeof vacaySpot);
 
   const props = serialize({ vacaySpot });
 
