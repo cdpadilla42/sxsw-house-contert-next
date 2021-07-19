@@ -4,12 +4,22 @@ import Restaurants from '../../models/Restaurants';
 export default async function handler(req, res) {
   const { method, query } = req;
   console.log(query);
+  let limit,
+    skip = 0;
+  if (query.limit) {
+    limit = parseInt(query.limit);
+    delete query.limit;
+  }
+  if (query.skip) {
+    skip = parseInt(query.skip);
+    delete query.skip;
+  }
 
   await dbConnect();
 
   switch (method) {
     case 'GET':
-      const restaurants = await Restaurants.find(query, null, { limit: 10 });
+      const restaurants = await Restaurants.find(query, null, { limit, skip });
       res.status(200).json({ success: true, data: restaurants });
       break;
     case 'POST':

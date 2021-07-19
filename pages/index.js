@@ -1,93 +1,55 @@
-import { useEffect, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { useState } from 'react';
 import Head from 'next/head';
 import dbConnect from '../util/dbConnect';
 import serialize from '../util/serializeData';
 import Restaurants from '/models/Restaurants';
 import { useQuery } from 'react-query';
 import queryString from 'query-string';
-import mapboxgl from 'mapbox-gl/dist/mapbox-gl';
 import { endpoint } from '../config';
-
-mapboxgl.accessToken =
-  'pk.eyJ1IjoiY2RwYWRpbGxhNDIiLCJhIjoiY2tyNms5dzRsMWphYzJubjNxbDZqOHBwbyJ9.v-4FKZnlExdu_wmXrtgPvw';
-
-const queryObjToString = (queryObj) => {
-  if (Object.keys(queryObj).length === 0) return '';
-  const s = queryString.stringify(queryObj);
-  return '?' + s;
-};
-
-const getRestaurants = async ({ queryKey }) => {
-  const [_, query] = queryKey;
-  const blob = await fetch(`${endpoint}/restaurants${queryObjToString(query)}`);
-  const data = await blob.json();
-  console.log(data);
-  console.log(query);
-  return data;
-};
+import Map from '../components/Map';
+import DetailDisplay from '../components/DetailDisplay';
 
 export default function Home({ vacaySpot }) {
   const [filters, setFilters] = useState({ borough: 'Brooklyn' });
   const [input, setInput] = useState('');
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [markers, setMarkers] = useState([]);
-  const mapRef = useRef(null);
-  const map = useRef(null);
-  const center = [-73.9012, 40.6839];
-  const { data } = useQuery(['restaurants', filters], getRestaurants);
+  const [skip, setSkip] = useState(0);
+  const LIMIT = 10;
+
+  const pagination = { limit: LIMIT, skip };
+
+  const getRestaurants = async ({ queryKey }) => {
+    const [_, query] = queryKey;
+    const blob = await fetch(
+      `${endpoint}/restaurants${queryObjToString(query)}`
+    );
+    const data = await blob.json();
+    console.log(data);
+    console.log(query);
+    return data;
+  };
+
+  const handlePageChange = (newPage) => {
+    // TODO: Hook me up to pagination buttons
+    setSkip((newPage - 1) * LIMIT);
+  };
+
+  const { data } = useQuery(
+    ['restaurants', { ...filters, ...pagination }],
+    getRestaurants
+  );
   const handleClick = (e) => {
-    clearPins();
     setFilters({ ...filters, borough: input });
+  };
+
+  const queryObjToString = (queryObj) => {
+    if (Object.keys(queryObj).length === 0) return '';
+    const s = queryString.stringify(queryObj);
+    return '?' + s;
   };
 
   const handleChange = (e) => {
     setInput(e.currentTarget.value);
   };
-
-  const initiatePin = (restaurant) => {
-    const el = document.createElement('div');
-    el.className = 'marker';
-    ReactDOM.render(<div className="marker" />, el);
-    const marker = new mapboxgl.Marker(el)
-      .setLngLat(restaurant.address.coord)
-      .setPopup(
-        new mapboxgl.Popup({ offset: 25 }) // add popups
-          .setHTML(
-            '<h3>' + restaurant.name + '</h3><p>' + restaurant.cuisine + '</p>'
-          )
-      )
-      .addTo(map.current);
-    return { marker, el };
-  };
-
-  const clearPins = () => {
-    markers.forEach(({ marker, el }) => {
-      marker.remove();
-      ReactDOM.unmountComponentAtNode(el);
-    });
-  };
-
-  useEffect(() => {
-    if (map.current) return;
-    map.current = new mapboxgl.Map({
-      container: mapRef.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center,
-      zoom: 10,
-    });
-
-    setMapLoaded(true);
-
-    return () => map.current.remove();
-  }, []);
-
-  useEffect(() => {
-    if (mapLoaded && data) {
-      const markers = data?.data?.map((restaurant) => initiatePin(restaurant));
-      setMarkers(markers);
-    }
-  }, [mapLoaded, data]);
 
   return (
     <div className="container">
@@ -104,9 +66,8 @@ export default function Home({ vacaySpot }) {
         <p className="description">
           Get started by editing <code>pages/index.js</code>
         </p>
-        <div className="map-wrapper">
-          <div className="map-container" ref={mapRef} />
-        </div>
+        <Map data={data} />
+        <DetailDisplay data={data} />
 
         <div className="grid">
           <a href="https://nextjs.org/docs" className="card">
@@ -150,15 +111,6 @@ export default function Home({ vacaySpot }) {
       </footer>
 
       <style jsx>{`
-        .map-wrapper {
-          position: relative;
-          width: 400px;
-        }
-
-        .map-container {
-          height: 400px;
-        }
-
         .container {
           min-height: 100vh;
           padding: 0 0.5rem;
