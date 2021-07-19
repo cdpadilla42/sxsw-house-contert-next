@@ -7,6 +7,7 @@ import Restaurants from '/models/Restaurants';
 import { useQuery } from 'react-query';
 import queryString from 'query-string';
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl';
+import { endpoint } from '../config';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoiY2RwYWRpbGxhNDIiLCJhIjoiY2tyNms5dzRsMWphYzJubjNxbDZqOHBwbyJ9.v-4FKZnlExdu_wmXrtgPvw';
@@ -19,9 +20,7 @@ const queryObjToString = (queryObj) => {
 
 const getRestaurants = async ({ queryKey }) => {
   const [_, query] = queryKey;
-  const blob = await fetch(
-    `http://localhost:3000/api/restaurants${queryObjToString(query)}`
-  );
+  const blob = await fetch(`${endpoint}/restaurants${queryObjToString(query)}`);
   const data = await blob.json();
   console.log(data);
   console.log(query);
