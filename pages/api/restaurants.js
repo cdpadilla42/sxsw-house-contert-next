@@ -19,10 +19,36 @@ export default async function handler(req, res) {
 
   switch (method) {
     case 'GET':
-      const restaurants = await Restaurants.find(query, null, { limit, skip });
-      res
-        .status(200)
-        .json({ success: true, data: restaurants, totalCount: 33 });
+      const pipeline = [
+        {
+          $match: {
+            borough: 'Brooklyn',
+          },
+        },
+        {
+          $facet: {
+            data: [
+              {
+                $skip: 10,
+              },
+              {
+                $limit: 10,
+              },
+            ],
+            totalCount: [
+              {
+                $count: 'count',
+              },
+            ],
+          },
+        },
+      ];
+
+      const results = await Restaurants.aggregate(pipeline);
+
+      const { data, totalCount } = results[0];
+
+      res.status(200).json({ success: true, data, totalCount: totalCount[0] });
       break;
     case 'POST':
       const newRestaurant = await Restaurants.create({

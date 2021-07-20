@@ -25,7 +25,7 @@ const DetailDisplay = ({ data, handlePageChange, page, maxPage }) => {
 
 const DetailCards = ({ restaurant }) => {
   return (
-    <div className="detail-card">
+    <div className="detail-card" key={restaurant._id}>
       <h3>{restaurant.name}</h3>
       <h4>{restaurant.cuisine}</h4>
       <p>{restaurant.address?.street}</p>
