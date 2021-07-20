@@ -20,7 +20,9 @@ export default async function handler(req, res) {
   switch (method) {
     case 'GET':
       const restaurants = await Restaurants.find(query, null, { limit, skip });
-      res.status(200).json({ success: true, data: restaurants });
+      res
+        .status(200)
+        .json({ success: true, data: restaurants, totalCount: 33 });
       break;
     case 'POST':
       const newRestaurant = await Restaurants.create({

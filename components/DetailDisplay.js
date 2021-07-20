@@ -1,13 +1,21 @@
 import React from 'react';
+import { PropTypes } from 'prop-types';
 import Pagination from './Pagination';
 
-const DetailDisplay = ({ data }) => {
+const DetailDisplay = ({ data, handlePageChange, page, maxPage }) => {
   console.log(data);
+
   return (
     <>
       <div className="detail-display">
-        <Pagination page={1} total={100} />
-        {data?.data.map((restaurant) => (
+        <Pagination
+          page={1}
+          maxPage={maxPage}
+          handlePageChange={handlePageChange}
+          page={page}
+          maxPage={maxPage}
+        />
+        {data.data?.map((restaurant) => (
           <DetailCards restaurant={restaurant} />
         ))}
       </div>
@@ -24,6 +32,18 @@ const DetailCards = ({ restaurant }) => {
       <hr />
     </div>
   );
+};
+
+DetailDisplay.propTypes = {
+  data: PropTypes.object,
+  handlePageChange: PropTypes.func,
+  page: PropTypes.number,
+};
+
+DetailDisplay.defaultProps = {
+  data: {},
+  handlePageChange: () => {},
+  page: 1,
 };
 
 export default DetailDisplay;

@@ -14,6 +14,7 @@ export default function Home({ vacaySpot }) {
   const [input, setInput] = useState('');
   const [skip, setSkip] = useState(0);
   const LIMIT = 10;
+  const page = skip / LIMIT + 1;
 
   const pagination = { limit: LIMIT, skip };
 
@@ -29,7 +30,9 @@ export default function Home({ vacaySpot }) {
   };
 
   const handlePageChange = (newPage) => {
-    // TODO: Hook me up to pagination buttons
+    if (newPage === 0) return;
+    if ((newPage - 1) * LIMIT >= data.totalCount) return;
+
     setSkip((newPage - 1) * LIMIT);
   };
 
@@ -37,6 +40,9 @@ export default function Home({ vacaySpot }) {
     ['restaurants', { ...filters, ...pagination }],
     getRestaurants
   );
+
+  const maxPage = data?.totalCount ? Math.ceil(data.totalCount / LIMIT) : 0;
+
   const handleClick = (e) => {
     setFilters({ ...filters, borough: input });
   };
@@ -67,7 +73,12 @@ export default function Home({ vacaySpot }) {
           Get started by editing <code>pages/index.js</code>
         </p>
         <Map data={data} />
-        <DetailDisplay data={data} />
+        <DetailDisplay
+          data={data}
+          handlePageChange={handlePageChange}
+          page={page}
+          maxPage={maxPage}
+        />
 
         <div className="grid">
           <a href="https://nextjs.org/docs" className="card">
