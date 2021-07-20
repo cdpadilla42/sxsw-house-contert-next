@@ -38,7 +38,8 @@ export default function Home({ vacaySpot }) {
 
   const { data } = useQuery(
     ['restaurants', { ...filters, ...pagination }],
-    getRestaurants
+    getRestaurants,
+    { keepPreviousData: true }
   );
 
   const maxPage = data?.totalCount ? Math.ceil(data.totalCount / LIMIT) : 0;

@@ -3,7 +3,6 @@ import Restaurants from '../../models/Restaurants';
 
 export default async function handler(req, res) {
   const { method, query } = req;
-  console.log(query);
   let limit,
     skip = 0;
   if (query.limit) {
@@ -21,18 +20,16 @@ export default async function handler(req, res) {
     case 'GET':
       const pipeline = [
         {
-          $match: {
-            borough: 'Brooklyn',
-          },
+          $match: query,
         },
         {
           $facet: {
             data: [
               {
-                $skip: 10,
+                $skip: skip,
               },
               {
-                $limit: 10,
+                $limit: limit,
               },
             ],
             totalCount: [
