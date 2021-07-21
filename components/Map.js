@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl';
 import ReactDOM from 'react-dom';
 
@@ -61,23 +62,21 @@ const Map = ({ data }) => {
   }, [data]);
 
   return (
-    <>
-      <div className="map-wrapper">
-        <div className="map-container" ref={mapRef} />
-      </div>
-
-      <style jsx>{`
-        .map-wrapper {
-          position: relative;
-          width: 400px;
-        }
-
-        .map-container {
-          height: 400px;
-        }
-      `}</style>
-    </>
+    <StyledMap className="map-wrapper">
+      <div className="map-container" ref={mapRef} />
+    </StyledMap>
   );
 };
+
+const StyledMap = styled.div`
+  flex: 1;
+  position: relative;
+  width: 400px;
+  height: 65vh;
+
+  .map-container {
+    height: 65vh;
+  }
+`;
 
 export default Map;

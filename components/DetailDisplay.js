@@ -1,25 +1,26 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
+import styled from 'styled-components';
 import Pagination from './Pagination';
 
 const DetailDisplay = ({ data, handlePageChange, page, maxPage }) => {
   console.log(data);
 
   return (
-    <>
-      <div className="detail-display">
-        <Pagination
-          page={1}
-          maxPage={maxPage}
-          handlePageChange={handlePageChange}
-          page={page}
-          maxPage={maxPage}
-        />
+    <StyledDetailDisplay className="detail-display">
+      <Pagination
+        page={1}
+        maxPage={maxPage}
+        handlePageChange={handlePageChange}
+        page={page}
+        maxPage={maxPage}
+      />
+      <div className="cards">
         {data.data?.map((restaurant) => (
           <DetailCards restaurant={restaurant} key={restaurant._id} />
         ))}
       </div>
-    </>
+    </StyledDetailDisplay>
   );
 };
 
@@ -45,5 +46,17 @@ DetailDisplay.defaultProps = {
   handlePageChange: () => {},
   page: 1,
 };
+
+const StyledDetailDisplay = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  .cards {
+    overflow-y: scroll;
+    border: 1px solid grey;
+    border-radius: 15px;
+  }
+`;
 
 export default DetailDisplay;
