@@ -13,6 +13,17 @@ export default async function handler(req, res) {
     skip = parseInt(query.skip);
     delete query.skip;
   }
+  if (query.grade) {
+    const { grade } = query;
+    delete query.grade;
+    if (typeof query.grade === 'object') {
+      query.grades.$elemMatch = { grade };
+    } else {
+      query.grades = { $elemMatch: { grade } };
+    }
+  }
+
+  console.log(query);
 
   await dbConnect();
 

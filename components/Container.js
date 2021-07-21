@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { endpoint } from '../config';
 import Map from '../components/Map';
 import DetailDisplay from '../components/DetailDisplay';
+import FiltersMenu from './Filters/FiltersMenu';
 
 const Container = () => {
   const [filters, setFilters] = useState({ borough: 'Brooklyn' });
@@ -45,6 +46,14 @@ const Container = () => {
     setFilters({ ...filters, borough: input });
   };
 
+  const handleFilterChange = (e) => {
+    const filterField = e.currentTarget.dataset.filter;
+    const value = e.currentTarget.value;
+    const newState = { ...filters };
+    newState[filterField] = value;
+    setFilters(newState);
+  };
+
   const queryObjToString = (queryObj) => {
     if (Object.keys(queryObj).length === 0) return '';
     const s = queryString.stringify(queryObj);
@@ -58,6 +67,7 @@ const Container = () => {
     <StyledContainer>
       <Map data={data} />
       <div className="right-side-bar">
+        <FiltersMenu filters={filters} onFilterChange={handleFilterChange} />
         <input type="text" value={input} onChange={handleChange} />
         <button onClick={handleClick}>Get Brooklyn Restaurants</button>
         <DetailDisplay
