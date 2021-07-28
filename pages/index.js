@@ -5,7 +5,7 @@ import dbConnect from '../util/dbConnect';
 import serialize from '../util/serializeData';
 import Restaurants from '/models/Restaurants';
 
-export default function Home({ vacaySpot }) {
+export default function Home({ cuisines }) {
   return (
     <div className="container">
       <Head>

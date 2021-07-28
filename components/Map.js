@@ -16,7 +16,7 @@ const Map = ({ data }) => {
   const initiatePin = (restaurant) => {
     const el = document.createElement('div');
     el.className = 'marker';
-    ReactDOM.render(<div className="marker" />, el);
+    ReactDOM.render(<div className="marker" onClick={onPinHighlight} />, el);
     const marker = new mapboxgl.Marker(el)
       .setLngLat(restaurant.address.coord)
       .setPopup(
@@ -34,6 +34,16 @@ const Map = ({ data }) => {
       marker.remove();
       ReactDOM.unmountComponentAtNode(el);
     });
+  };
+
+  const clearHighlights = () => {
+    // TODO How to handle click highlighting... not an elegant solution when using HTML markers.
+    // State is kept in the mapbox GL, so it's still an option....
+  };
+
+  const onPinHighlight = (e) => {
+    e.currentTarget.classList.toggle('highlighted-marker');
+    e.currentTarget.classList.toggle('marker');
   };
 
   useEffect(() => {
@@ -76,6 +86,9 @@ const StyledMap = styled.div`
 
   .map-container {
     height: 65vh;
+  }
+
+  .highlighted-marker {
   }
 `;
 
