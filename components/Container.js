@@ -8,7 +8,7 @@ import DetailDisplay from '../components/DetailDisplay';
 import FiltersMenu from './Filters/FiltersMenu';
 
 const Container = ({ neighborhoods }) => {
-  const [filters, setFilters] = useState({ borough: 'Brooklyn' });
+  const [filters, setFilters] = useState({});
   const [input, setInput] = useState('');
   const [skip, setSkip] = useState(0);
   const LIMIT = 10;

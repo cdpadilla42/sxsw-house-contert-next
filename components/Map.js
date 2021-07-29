@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 mapboxgl.accessToken =
   'pk.eyJ1IjoiY2RwYWRpbGxhNDIiLCJhIjoiY2tyNms5dzRsMWphYzJubjNxbDZqOHBwbyJ9.v-4FKZnlExdu_wmXrtgPvw';
 
-const Map = ({ data }) => {
+const Map = ({ data, neighborhoods }) => {
   const mapRef = useRef(null);
   const map = useRef(null);
   const center = [-73.9012, 40.6839];
