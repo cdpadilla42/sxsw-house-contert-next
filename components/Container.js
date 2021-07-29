@@ -40,7 +40,7 @@ const Container = () => {
     { keepPreviousData: true }
   );
 
-  const maxPage = data?.totalCount ? Math.ceil(data.totalCount / LIMIT) : 0;
+  const maxPage = data?.totalCount ? Math.ceil(data.totalCount / LIMIT) : 1;
 
   const handleClick = (e) => {
     setFilters({ ...filters, borough: input });
@@ -52,6 +52,7 @@ const Container = () => {
     const newState = { ...filters };
     newState[filterField] = value;
     setFilters(newState);
+    handlePageChange(1);
   };
 
   const queryObjToString = (queryObj) => {

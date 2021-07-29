@@ -54,11 +54,13 @@ export default async function handler(req, res) {
 
       const results = await Restaurants.aggregate(pipeline);
 
+      console.log(results);
+
       const { data, totalCount } = results[0];
 
-      res
-        .status(200)
-        .json({ success: true, data, totalCount: totalCount[0].count });
+      const count = totalCount[0]?.count || 0;
+
+      res.status(200).json({ success: true, data, totalCount: count });
       break;
     case 'POST':
       const newRestaurant = await Restaurants.create({

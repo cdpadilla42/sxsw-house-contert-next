@@ -6,6 +6,16 @@ import Pagination from './Pagination';
 const DetailDisplay = ({ data, handlePageChange, page, maxPage }) => {
   console.log(data);
 
+  const renderDetailCards = () => {
+    console.log(data.data);
+    if (!data?.data?.length) {
+      return <p>Sorry, there's no food with those filter!</p>;
+    }
+    return data.data.map((restaurant) => (
+      <DetailCards restaurant={restaurant} key={restaurant._id} />
+    ));
+  };
+
   return (
     <StyledDetailDisplay className="detail-display">
       <Pagination
@@ -15,11 +25,7 @@ const DetailDisplay = ({ data, handlePageChange, page, maxPage }) => {
         page={page}
         maxPage={maxPage}
       />
-      <div className="cards">
-        {data.data?.map((restaurant) => (
-          <DetailCards restaurant={restaurant} key={restaurant._id} />
-        ))}
-      </div>
+      <div className="cards">{renderDetailCards()}</div>
     </StyledDetailDisplay>
   );
 };
