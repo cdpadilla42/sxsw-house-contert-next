@@ -4,8 +4,9 @@ import Container from '../components/Container';
 import dbConnect from '../util/dbConnect';
 import serialize from '../util/serializeData';
 import Restaurants from '/models/Restaurants';
+import Neighborhoods from '/models/Neighborhoods';
 
-export default function Home({ cuisines }) {
+export default function Home({ neighborhoods }) {
   return (
     <div className="container">
       <Head>
@@ -14,7 +15,7 @@ export default function Home({ cuisines }) {
       </Head>
 
       <StyledBody>
-        <Container />
+        <Container neighborhoods={neighborhoods} />
       </StyledBody>
     </div>
   );

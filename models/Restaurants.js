@@ -32,5 +32,5 @@ const RestaurantsSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.Restaurants ||
+export default mongoose.models?.Restaurants ||
   mongoose.model('Restaurants', RestaurantsSchema, 'restaurants');

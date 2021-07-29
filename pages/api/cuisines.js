@@ -22,11 +22,8 @@ export default async function handler(req, res) {
       ];
 
       const results = await Restaurants.aggregate(pipeline);
-      console.log('results', results);
 
       const cuisines = results.map((cuisine) => cuisine._id);
-
-      console.log(cuisines);
 
       res.status(200).json({ success: true, cuisines });
       break;

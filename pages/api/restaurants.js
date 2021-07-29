@@ -23,8 +23,6 @@ export default async function handler(req, res) {
     }
   }
 
-  console.log(query);
-
   await dbConnect();
 
   switch (method) {
@@ -53,8 +51,6 @@ export default async function handler(req, res) {
       ];
 
       const results = await Restaurants.aggregate(pipeline);
-
-      console.log(results);
 
       const { data, totalCount } = results[0];
 

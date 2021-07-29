@@ -7,7 +7,7 @@ import Map from '../components/Map';
 import DetailDisplay from '../components/DetailDisplay';
 import FiltersMenu from './Filters/FiltersMenu';
 
-const Container = () => {
+const Container = ({ neighborhoods }) => {
   const [filters, setFilters] = useState({ borough: 'Brooklyn' });
   const [input, setInput] = useState('');
   const [skip, setSkip] = useState(0);
@@ -22,8 +22,6 @@ const Container = () => {
       `${endpoint}/restaurants${queryObjToString(query)}`
     );
     const data = await blob.json();
-    console.log(data);
-    console.log(query);
     return data;
   };
 
@@ -66,7 +64,7 @@ const Container = () => {
   };
   return (
     <StyledContainer>
-      <Map data={data} />
+      <Map data={data} neighborhoods={neighborhoods} />
       <div className="right-side-bar">
         <FiltersMenu filters={filters} onFilterChange={handleFilterChange} />
         <input type="text" value={input} onChange={handleChange} />
