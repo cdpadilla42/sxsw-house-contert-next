@@ -18,8 +18,10 @@ const GradeFilter = ({ cuisine, onFilterChange }) => {
   const renderOptions = () => {
     if (!data || !data.cuisines || data.cuisines.length === 0) return '';
     // TODO Filter out the nullish cuisines
-    const filteredCuisines = data.cuisines.filter();
-    return data.cuisines.map((cuisine) => (
+    const filteredCuisines = data.cuisines.filter(
+      (cuisine) => !!cuisine && cuisine !== 'Not Listed/Not Applicable'
+    );
+    return filteredCuisines.map((cuisine) => (
       <option value={cuisine} key={cuisine}>
         {cuisine}
       </option>

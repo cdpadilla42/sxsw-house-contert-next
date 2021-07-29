@@ -14,6 +14,11 @@ export default async function handler(req, res) {
             _id: '$cuisine',
           },
         },
+        {
+          $sort: {
+            _id: 1,
+          },
+        },
       ];
 
       const results = await Restaurants.aggregate(pipeline);
