@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import GradeFilter from './GradeFilter';
 import CuisineFilter from './CuisineFilter';
+import SearchFilter from './SearchFilter';
 
 const FiltersMenu = ({ filters, onFilterChange }) => {
   const { borough, grade, cuisine } = filters;
@@ -9,6 +10,7 @@ const FiltersMenu = ({ filters, onFilterChange }) => {
     <div>
       <GradeFilter grade={grade} onFilterChange={onFilterChange} />
       <CuisineFilter cuisine={cuisine} onFilterChange={onFilterChange} />
+      <SearchFilter />
     </div>
   );
 };

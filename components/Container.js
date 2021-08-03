@@ -6,6 +6,7 @@ import { endpoint } from '../config';
 import Map from '../components/Map';
 import DetailDisplay from '../components/DetailDisplay';
 import FiltersMenu from './Filters/FiltersMenu';
+import { queryObjToString } from '../util/functions';
 
 const Container = ({ neighborhoods }) => {
   const [filters, setFilters] = useState({});
@@ -27,7 +28,7 @@ const Container = ({ neighborhoods }) => {
 
   const handlePageChange = (newPage) => {
     if (newPage === 0) return;
-    if ((newPage - 1) * LIMIT >= data.totalCount) return;
+    if ((newPage - 1) * LIMIT >= data?.totalCount) return;
 
     setSkip((newPage - 1) * LIMIT);
   };
@@ -51,12 +52,6 @@ const Container = ({ neighborhoods }) => {
     newState[filterField] = value;
     setFilters(newState);
     handlePageChange(1);
-  };
-
-  const queryObjToString = (queryObj) => {
-    if (Object.keys(queryObj).length === 0) return '';
-    const s = queryString.stringify(queryObj);
-    return '?' + s;
   };
 
   const handleChange = (e) => {
