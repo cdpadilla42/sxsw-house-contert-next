@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { endpoint } from '../../config';
-import debounce from 'lodash.debounce';
 import { resetIdCounter, useCombobox } from 'downshift';
 import { useQuery } from 'react-query';
 import { queryObjToString } from '../../util/functions';
 import { useDebounce } from '../../util/useDebounce';
 import { DropDown, SearchStyles, DropDownItem } from '../../styles/DropDown';
 
-const SearchFilter = () => {
+const SearchFilter = ({ onFilterChange }) => {
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 1000);
 
@@ -24,7 +24,7 @@ const SearchFilter = () => {
     return data;
   };
 
-  const { data, isLoading, error } = useQuery(
+  const { data, isLoading } = useQuery(
     ['neighborhoods-suggestions-search', debouncedQuery],
     getNeighborhoodsMethod
   );
@@ -49,18 +49,12 @@ const SearchFilter = () => {
     itemToString: (item) => item?.name || '',
     onSelectedItemChange({ selectedItem }) {
       console.log('Selected!', selectedItem);
+      onFilterChange(null, {
+        filterField: 'neighborhoodID',
+        value: selectedItem.id,
+      });
     },
   });
-
-  console.log(neighborhoods);
-  console.log(error);
-
-  const findNeighborhoodsButChill = debounce(getNeighborhoodsMethod, 350);
-
-  const handleChange = (e) => {
-    setQuery(e.currentTarget.value);
-    findNeighborhoodsButChill();
-  };
 
   return (
     <SearchStyles>
@@ -92,6 +86,14 @@ const SearchFilter = () => {
       </DropDown>
     </SearchStyles>
   );
+};
+
+SearchFilter.propTypes = {
+  onFilterChange: PropTypes.func,
+};
+
+SearchFilter.defaultProps = {
+  onFilterChange: () => {},
 };
 
 export default SearchFilter;

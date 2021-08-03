@@ -10,7 +10,7 @@ const FiltersMenu = ({ filters, onFilterChange }) => {
     <div>
       <GradeFilter grade={grade} onFilterChange={onFilterChange} />
       <CuisineFilter cuisine={cuisine} onFilterChange={onFilterChange} />
-      <SearchFilter />
+      <SearchFilter onFilterChange={onFilterChange} />
     </div>
   );
 };

@@ -45,9 +45,19 @@ const Container = ({ neighborhoods }) => {
     setFilters({ ...filters, borough: input });
   };
 
-  const handleFilterChange = (e) => {
-    const filterField = e.currentTarget.dataset.filter;
-    const value = e.currentTarget.value;
+  const handleFilterChange = (
+    e,
+    changedFilterObj = { filterField: undefined, value: undefined }
+  ) => {
+    let filterField;
+    let value;
+    if (e) {
+      filterField = e.currentTarget.dataset.filter;
+      value = e.currentTarget.value;
+    } else if (changedFilterObj) {
+      filterField = changedFilterObj.filterField;
+      value = changedFilterObj.value;
+    }
     const newState = { ...filters };
     newState[filterField] = value;
     setFilters(newState);
