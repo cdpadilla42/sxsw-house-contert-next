@@ -8,12 +8,12 @@ export default async function handler(req, res) {
 
   switch (method) {
     case 'GET':
-      console.log(query);
       const neighborhoods = await Neighborhoods.find(
         {
-          name: { $regex: 'East' },
+          name: { $regex: query.search },
         },
-        { name: 1 }
+        { name: 1 },
+        { limit: 6 }
       );
 
       res.status(200).json({ success: true, neighborhoods });
