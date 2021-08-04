@@ -42,19 +42,29 @@ const SearchFilter = ({ onFilterChange }) => {
     isOpen,
   } = useCombobox({
     items: neighborhoods || [],
-    onInputValueChange() {
+    onInputValueChange: (newInput) => {
       console.log('Input Changed');
+      console.log(newInput.inputValue);
+      handleSearchClear(newInput.inputValue);
       setQuery(inputValue);
     },
     itemToString: (item) => item?.name || '',
     onSelectedItemChange({ selectedItem }) {
-      console.log('Selected!', selectedItem);
       onFilterChange(null, {
         filterField: 'neighborhoodID',
-        value: selectedItem.id,
+        value: selectedItem._id,
       });
     },
   });
+
+  const handleSearchClear = (value) => {
+    if (value === '') {
+      onFilterChange(null, {
+        filterField: 'neighborhoodID',
+        value: '',
+      });
+    }
+  };
 
   return (
     <SearchStyles>
@@ -65,6 +75,7 @@ const SearchFilter = ({ onFilterChange }) => {
             placeholder: 'Search Neighborhoods',
             id: 'search',
             className: isLoading ? 'loading' : '',
+            onSearch: handleSearchClear,
           })}
         />
       </div>

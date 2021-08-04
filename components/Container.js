@@ -59,7 +59,11 @@ const Container = ({ neighborhoods }) => {
       value = changedFilterObj.value;
     }
     const newState = { ...filters };
-    newState[filterField] = value;
+    if (value === '') {
+      delete newState[filterField];
+    } else {
+      newState[filterField] = value;
+    }
     setFilters(newState);
     handlePageChange(1);
   };
