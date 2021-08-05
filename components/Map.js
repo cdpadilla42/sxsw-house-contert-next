@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl';
 import ReactDOM from 'react-dom';
+import { calculateMapBounds } from '../util/functions';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoiY2RwYWRpbGxhNDIiLCJhIjoiY2tyNms5dzRsMWphYzJubjNxbDZqOHBwbyJ9.v-4FKZnlExdu_wmXrtgPvw';
 
-const Map = ({ data, neighborhoods }) => {
+const Map = ({ data, bounds }) => {
   const mapRef = useRef(null);
   const map = useRef(null);
   const center = [-73.9012, 40.6839];
@@ -30,6 +32,7 @@ const Map = ({ data, neighborhoods }) => {
   };
 
   const clearPins = () => {
+    if (!markers) return;
     markers.forEach(({ marker, el }) => {
       marker.remove();
       ReactDOM.unmountComponentAtNode(el);
@@ -61,9 +64,16 @@ const Map = ({ data, neighborhoods }) => {
   }, []);
 
   useEffect(() => {
-    if (mapLoaded && data) {
-      const markers = data?.data?.map((restaurant) => initiatePin(restaurant));
+    if (mapLoaded && !!data) {
+      console.log(data);
+      const markers = data?.map((restaurant) => initiatePin(restaurant));
       setMarkers(markers);
+
+      // Set bounds if passed
+      if (bounds && bounds?.length !== 0 && data && data?.length !== 0) {
+        console.log(data);
+        map.current.fitBounds(data.data.bounds);
+      }
     }
   }, [mapLoaded, data]);
 
@@ -91,5 +101,15 @@ const StyledMap = styled.div`
   .highlighted-marker {
   }
 `;
+
+Map.propTypes = {
+  data: PropTypes.array,
+  coordinates: PropTypes.array,
+};
+
+Map.defaultProps = {
+  data: [],
+  coordinates: [],
+};
 
 export default Map;

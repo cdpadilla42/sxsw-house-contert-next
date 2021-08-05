@@ -73,7 +73,7 @@ const Container = ({ neighborhoods }) => {
   };
   return (
     <StyledContainer>
-      <Map data={data} neighborhoods={neighborhoods} />
+      <Map data={data?.data} bounds={data?.bounds} />
       <div className="right-side-bar">
         <FiltersMenu filters={filters} onFilterChange={handleFilterChange} />
         <input type="text" value={input} onChange={handleChange} />

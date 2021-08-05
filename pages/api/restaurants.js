@@ -1,11 +1,14 @@
 import dbConnect from '../../util/dbConnect';
 import Restaurants from '../../models/Restaurants';
 import Neighborhoods from '../../models/Neighborhoods';
+import { calculateMapBounds } from '../../util/functions';
 
 export default async function handler(req, res) {
   const { method, query } = req;
   let limit,
     skip = 0;
+  let coordinates;
+
   if (query.limit) {
     limit = parseInt(query.limit);
     delete query.limit;
@@ -24,10 +27,12 @@ export default async function handler(req, res) {
     }
   }
 
-  if (!!query.neighborhoodID) {
+  if (query.neighborhoodID) {
     const neighborhood = await Neighborhoods.findById(query.neighborhoodID);
     if (neighborhood) {
-      console.log(neighborhood);
+      // Grab coordinates to send to client
+      coordinates = neighborhood.geometry.coordinates[0];
+      // filter restaurant results
       query['address.coord'] = {
         $geoWithin: {
           $geometry: neighborhood.geometry,
@@ -36,8 +41,6 @@ export default async function handler(req, res) {
     }
     delete query.neighborhoodID;
   }
-
-  console.log(query);
 
   await dbConnect();
 
@@ -72,7 +75,18 @@ export default async function handler(req, res) {
 
       const count = totalCount[0]?.count || 0;
 
-      res.status(200).json({ success: true, data, totalCount: count });
+      const resultObject = { success: true, data, totalCount: count };
+
+      if (coordinates) {
+        // Check if this neighborhood has an extra array nested. If so, go one level deeper
+        if (coordinates[0] && coordinates[0][0] && coordinates[0][0][0]) {
+          coordinates = coordinates[0];
+        }
+        const bounds = calculateMapBounds(coordinates);
+        resultObject.bounds = bounds;
+      }
+
+      res.status(200).json(resultObject);
       break;
     case 'POST':
       const newRestaurant = await Restaurants.create({
