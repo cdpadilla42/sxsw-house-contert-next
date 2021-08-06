@@ -55,7 +55,22 @@ const SearchFilter = ({ onFilterChange }) => {
         value: selectedItem._id,
       });
     },
+    stateReducer,
   });
+
+  function stateReducer(state, actionAndChanges) {
+    const { type, changes } = actionAndChanges;
+    // this prevents the menu from being closed when the user selects an item with 'Enter' or mouse
+    switch (type) {
+      case useCombobox.stateChangeTypes.InputKeyDownEnter:
+      case useCombobox.stateChangeTypes.ItemClick:
+        return {
+          ...changes, // default Downshift new state changes on item selection.
+        };
+      default:
+        return changes; // otherwise business as usual.
+    }
+  }
 
   const handleSearchClear = (value) => {
     if (value === '') {
@@ -75,7 +90,6 @@ const SearchFilter = ({ onFilterChange }) => {
             placeholder: 'Search Neighborhoods',
             id: 'search',
             className: isLoading ? 'loading' : '',
-            onSearch: handleSearchClear,
           })}
         />
       </div>
@@ -83,9 +97,10 @@ const SearchFilter = ({ onFilterChange }) => {
         {isOpen &&
           neighborhoods.map((item, index) => (
             <DropDownItem
-              key={item.id}
-              {...getItemProps({ item })}
+              {...getItemProps({ item, index })}
+              key={item._id}
               highlighted={index === highlightedIndex}
+              onMouseEnter={(e) => console.log(index)}
             >
               {item.name}
             </DropDownItem>

@@ -72,7 +72,7 @@ const Map = ({ data, bounds }) => {
       // Set bounds if passed
       if (bounds && bounds?.length !== 0 && data && data?.length !== 0) {
         console.log(data);
-        map.current.fitBounds(data.data.bounds);
+        map.current.fitBounds(bounds);
       }
     }
   }, [mapLoaded, data]);

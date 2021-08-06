@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     case 'GET':
       const neighborhoods = await Neighborhoods.find(
         {
-          name: { $regex: query.search },
+          name: { $regex: query.search, $options: 'i' },
         },
         { name: 1 },
         { limit: 6 }
